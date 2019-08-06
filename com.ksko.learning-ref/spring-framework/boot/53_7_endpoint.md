@@ -7,7 +7,7 @@
 ! @Endpoint 어노테이션으로 엔드포인트를 지정해주고(예제에서는 클래스 위에 선언하던데..!!) 지정된 url로 요청하면 노출된다. [엔드포인트 사용 예제](https://howtodoinjava.com/spring-boot/actuator-endpoints-example/).
 
 ! JMX는 앱 모니터링 표준. 
-![jmx_architecture](././imgs/jmx.png)
+![jmx_architecture](https://github.com/mychum1/learning_ref/tree/master/com.ksko.learning-ref/imgs/jmx.png)  
 자바 앱이랑 jmx 모니터링 툴이랑 연결해서 데이터를 본다고 하면 되고, 실행시킬 때 옵션을 사용해주면 된다. java -jar com.sun.management.jmxremote=true 이런식으로!
 
 @Endpoint 어노테이트된 @Bean을 추가한다면, @ReadOperation, @WriteOperation, @DeleteOperation과 같이 어노테이트된 메소드들은 자동적으로 JMX와 웹앱에서 HTTP를 통해 노출된다. 엔드포인트들은 Jersey, 스프링 MVC나 Spring WebFlux를 사용해서 노출될 수 있다.   
