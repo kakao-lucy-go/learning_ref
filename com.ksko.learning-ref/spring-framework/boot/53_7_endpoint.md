@@ -50,7 +50,8 @@ prediacate의 path는 웹에 노출된 엔드포인트의 기본 path와 엔드�
 ### HTTP  메소드
    
 predicate 의 HTTP메소드는 동작 타입에 의해 결정된다. 아래 테이블을 보자.  
-| Operration       | HTTP method |
+
+| Operation       | HTTP method |
 | :--------------- | :---------- |
 | @ReadOperation   | GET         |
 | @WriteOperation  | POST        |
