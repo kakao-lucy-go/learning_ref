@@ -84,13 +84,13 @@ predicate의 produces 구문은 @DeleteOperation, @ReadOperation, @WriteOperatio
 엔드포인트 동작을 위한 기본 응답 스테이터스는 타입(read, write, delete)과 리턴 값에 의존한다. @ReadOperation 은 값을 리턴하면 응답코드를 200 OK로 응답한다. 값은 반환하지 않으면 404(Not found)를 응답할 것이다. @WriteOpearion이나 @DeleteOperation이 값을 반환하면 200 OK를 반환할 것이다. 값을 반환하지 않으면 204 (No Content)를 반환할 것이다.  
 동작이 요구된 파라미터 없이 호출하거나 요구되는 타입으로 컨버팅될 수 없다면 메소드는 불리지 않을 것이고 응답 스테이터스도 400(bad request) 일 것이다.  
   
-### 웹 엔드포인트 범위 요청
+### 웹 엔드포인트 범위 요청 (scope request)
 
 HTTP 범위 요청은 HTTP 리소스의 요청 부분에 사용될 수 있다. 스프링 MVC나 스프링 웹 플럭스를 사용할 때 **org.springframework.core.io.Resource** 를 리턴하는 동작은 자동적으로 범위 요청을 지원한다.  
 >범위 요청은 Jersey를 사용할 때는 지원하지 않는다.  
   
 ### 웹 엔드포인트 시큐리티  
-웹 엔드 포인트 또는 웹 특정 엔드 포인트 확장에 대한 조작은 현재 java.security.Principal 또는 org.springframework.boot.actuate.endpoint.SecurityContext를 메소드 매개 변수로 수신 할 수 있다. 전자는 일반적으로 @Nullable과 함께 사용되어 인증 된 사용자와 인증되지 않은 사용자에 대해 다른 동작을 제공한다. 후자는 일반적으로 isUserInRole (String) 메소드를 사용하여 권한 부여 검사를 수행하는 데 사용다.  
+웹 엔드 포인트 또는 웹 특정 엔드 포인트 확장에 대한 조d 현재 java.security.Principal 또는 org.springframework.boot.actuate.endpoint.SecurityContext를 메소드 매개 변수로 수신 할 수 있다. 전자는 일반적으로 @Nullable과 함께 사용되어 인증 된 사용자와 인증되지 않은 사용자에 대해 다른 동작을 제공한다. 후자는 일반적으로 isUserInRole (String) 메소드를 사용하여 권한 부여 검사를 수행하는 데 사용다.  
   
 53.7.3 서블릿 엔드포인트
 ----
@@ -106,6 +106,7 @@ HTTP 범위 요청은 HTTP 리소스의 요청 부분에 사용될 수 있다. �
 ====
   
 상태 정보를 사용하여 실행중인 응용 프로그램의 상태를 확인할 수 있다. 프로덕션 시스템이 다운 될 때 경고하기 위해 소프트웨어를 모니터링하여 자주 사용된다. health 엔드포인트에 의해 노출되는 정보는 다음 값 중 하나로 구성 할 수있는 management.endpoint.health.show-details 속성에 따라 다르다.  
+  
 | Name            | Description                                                                   |
 | :-------------- | :---------------------------------------------------------------------------- |
 | never           | 디테일은 절대 보여지지 않는다.                                                             |
@@ -116,7 +117,10 @@ HTTP 범위 요청은 HTTP 리소스의 요청 부분에 사용될 수 있다. �
   
 > 앱이 secure 하고있고 always를 사용하길 원할수도 있는데, securiy config에 권한이 있는 유저와 없는 유저 모두에게 health 엔드포인트에 접근하는 것을 허가해주어야만 한다.  
   
-health 정보는 **HealthIndicatorResigtry** 에서 수집된다. (기본적으로 모든 HealthIndicator 인스턴스는 ApplicationContext에 의해 정의된다.). 스프링 부트는 자동 config된 **HealthIndicators**들을 포함하고, 커스텀할 수도 있다. 기본적으로 최종 시스템 상태는 상태 목록에 따라 각 HealthIndicator에서 상태를 정렬하는 HealthAggregator에 의해 파생된다. 정렬 된 목록의 첫 번째 상태는 전체 상태로 사용된다. HealthIndicator가 HealthAggregator에 알려진 상태를 리턴하지 않으면 UNKNOWN 상태가 사용된다.
+health 정보는 **HealthIndicatorResigtry** 에서 수집된다. (기본적으로 모든 HealthIndicator 인스턴스는 ApplicationContext에 의해 정의된다.). 
+스프링 부트는 자동 config된 **HealthIndicators**들을 포함하고, 커스텀할 수도 있다. 
+기본적으로 최종 시스템 상태는 상태 목록에 따라 각 HealthIndicator에서 상태를 정렬하는 HealthAggregator에 의해 파생된다. 
+정렬 된 목록의 첫 번째 상태는 전체 상태로 사용된다. HealthIndicator가 HealthAggregator에 알려진 상태를 리턴하지 않으면 UNKNOWN 상태가 사용된다.
   
 
 > HealthIndicatorRegistry는 런타임에 Health 표시기를 등록 및 등록 해제하는 데 사용될 수 있다.
@@ -147,9 +151,11 @@ health 정보는 **HealthIndicatorResigtry** 에서 수집된다. (기본적으�
 53.8.2 커스텀 HealthIndicator 작성하기
 ----
 
-사용자 정의 health 정보를 제공하기 위해 HealthIndicator 인터페이스를 구현하는 Spring 빈을 등록 할 수 있다. health () 메서드의 구현을 제공하고 Health 응답을 반환해야 한다. Health 응답에는 상태가 포함되어야하며 표시 할 추가 세부 사항을 선택적으로 포함 할 수 있다. 다음 코드는 샘플 HealthIndicator 구현을 보여준다.
+사용자 정의 health 정보를 제공하기 위해 HealthIndicator 인터페이스를 구현하는 Spring 빈을 등록 할 수 있다. health () 메서드의 구현을 제공하고 Health 응답을 반환해야 한다. 
+Health 응답에는 상태가 포함되어야하며 표시 할 추가 세부 사항을 선택적으로 포함 할 수 있다. 다음 코드는 샘플 HealthIndicator 구현을 보여준다.
 
 <pre><code>
+
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.stereotype.Component;
@@ -169,9 +175,10 @@ public class MyHealthIndicator implements HealthIndicator {
 }
 </code></pre>
 
-> 주어진 HealthIndicator의 식별자는 존재하는 경우 HealthIndicator 접미어가 없는 Bean의 이름이다. 앞의 예에서 health 정보는 **my**라는 항목에서 사용할 수 있습니다.
+> 주어진 HealthIndicator의 식별자는 존재하는 경우 HealthIndicator 접미어가 없는 Bean의 이름이다. 앞의 예에서 health 정보는 **my**라는 항목에서 사용할 수 있다.
 
-Spring Boot의 사전 정의 된 상태 유형 외에도 Health는 새로운 시스템 상태를 나타내는 사용자 정의 상태를 반환 할 수도 있다. 이러한 경우 HealthAggregator 인터페이스의 사용자 정의 구현도 제공하거나 management.health.status.order 구성 특성을 사용하여 기본 구현을 구성해야 한다.
+Spring Boot의 사전 정의 된 상태 유형 외에도 Health는 새로운 시스템 상태를 나타내는 사용자 정의 상태를 반환 할 수도 있다. 
+이러한 경우 HealthAggregator 인터페이스의 사용자 정의 구현도 제공하거나 management.health.status.order 구성 특성을 사용하여 기본 구현을 구성해야 한다.
 
 예를 들어 HealthIndicator 구현 중 하나에서 코드가 FATAL 인 새 Status가 사용되고 있다고 가정한다. 심각도 순서를 구성하려면 응용 프로그램 속성에 다음 속성을 추가하십시오.
 
@@ -179,7 +186,8 @@ Spring Boot의 사전 정의 된 상태 유형 외에도 Health는 새로운 시
 management.health.status.order=FATAL, DOWN, OUT_OF_SERVICE, UNKNOWN, UP
 </code></pre>
 
-응답의 HTTP 상태 코드는 전반적인 상태를 반영한다 (예 : UP은 200으로 매핑되고 OUT_OF_SERVICE 및 DOWN은 503으로 매핑 됨). 또한 HTTP를 통해 상태 관리 끝점에 액세스하는 경우 사용자 지정 상태 매핑을 등록 할 수도 있다. 예를 들어 다음 속성은 FATAL을 503 (서비스를 사용할 수 없음)으로 매핑한다.
+응답의 HTTP 상태 코드는 전반적인 상태를 반영한다 (예 : UP은 200으로 매핑되고 OUT_OF_SERVICE 및 DOWN은 503으로 매핑 됨). 
+또한 HTTP를 통해 상태 관리 엔드포인트에 액세스하는 경우 사용자 지정 상태 매핑을 등록 할 수도 있다. 예를 들어 다음 속성은 FATAL을 503 (서비스를 사용할 수 없음)으로 매핑한다.
 
 <pre><code>
 management.health.status.http-mapping.FATAL=503
@@ -192,20 +200,23 @@ management.health.status.http-mapping.FATAL=503
 | Status         | Mapping                       |
 | :------------- | :---------------------------- |
 | DOWN           | SERVICE_UNAVAILABLE(503)      |
-| OUT_OF_SERVICE | SERVICE_UNABLABLE(503)        |
+| OUT_OF_SERVICE | SERVICE_UNAVAILABLE(503)        |
 | UP             | 기본 매핑 값이 없어서 http status는 200 |
 | UNKNOWN        | 기본 매핑 값이 없어서 http status는 200 |
 
-53.8.3 반응성 health indicators
+53.8.3 반응성(리액티브) health indicators
 ----
 
-ReactiveHealthIndicator는 Spring WebFlux를 사용하는 것과 같이 반응이있는 응용 프로그램의 경우 응용 프로그램 상태를 가져 오는 비 차단 계약을 제공한다. 전통적인 HealthIndicator와 유사하게, 건강 정보는 ReactiveHealthIndicatorRegistry의 컨텐츠 (기본적으로 ApplicationContext에 정의 된 모든 HealthIndicator 및 ReactiveHealthIndicator 인스턴스)에서 수집된다. 반응 API에 대해 확인하지 않는 Regular HealthIndicator는 탄력적 스케줄러에서 실행된다.
+ReactiveHealthIndicator는 Spring WebFlux를 사용하는 것과 같이 반응이있는 응용 프로그램의 경우 응용 프로그램 상태를 가져 오는 논블로킹 계약을 제공한다. 
+전통적인 HealthIndicator와 유사하게, health 정보는 ReactiveHealthIndicatorRegistry의 컨텐츠 (기본적으로 ApplicationContext에 정의 된 모든 HealthIndicator 및 ReactiveHealthIndicator 인스턴스)에서 
+수집된다. 반응 API에 대해 확인하지 않는 Regular HealthIndicator는 탄력적 스케줄러에서 실행된다.
 
 > 반응 형 응용 프로그램에서 ReactiveHealthIndicatorRegistry를 사용하여 런타임시 상태 표시기를 등록 및 등록 취소 할 수 있다.
 
 반응 형 API에서 사용자 정의 상태 정보를 제공하기 위해 ReactiveHealthIndicator 인터페이스를 구현하는 Spring Bean을 등록 할 수 있다. 다음 코드는 샘플 ReactiveHealthIndicator 구현을 보여준다.
 
 <pre><code>
+
 @Component
 public class MyReactiveHealthIndicator implements ReactiveHealthIndicator {
 
@@ -232,4 +243,4 @@ public class MyReactiveHealthIndicator implements ReactiveHealthIndicator {
 | MongoReactiveHealthIndicator     | 몽고db 체크           |
 | RedisReactiveHealthIndicator     | Redis 서버 체크       |
 
-> 필요한 경우 반응성 표시기가 일반 표시기를 대체한다. 또한 명시 적으로 처리되지 않은 HealthIndicator는 자동으로 랩핑된다.
+> 필요한 경우 반응성 indicator가 일반 indeicator를 대체한다. 또한 명시 적으로 처리되지 않은 HealthIndicator는 자동으로 랩핑된다.
